@@ -19,7 +19,9 @@ public class PublisherController {
     @PostConstruct
     public void publishMessage() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Digite a mensagem para enviar ao Redis (ou 'sair' para sair):");
+        System.out.println("Digite o canal que você deseja entrar:");
+        String canal = scanner.nextLine();
+        System.out.printf("Digite a mensagem para enviar para o canal '%s' (ou 'sair' para sair):", canal);
 
         while (true) {
             String message = scanner.nextLine();
@@ -27,7 +29,7 @@ public class PublisherController {
                 System.out.println("Saindo...");
                 break;
             }
-            redisTemplate.convertAndSend("testa", message);
+            redisTemplate.convertAndSend(canal, message);
             System.out.println("Mensagem publicada: " + message);
         }
         scanner.close();
