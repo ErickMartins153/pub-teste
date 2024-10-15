@@ -1,22 +1,21 @@
 package br.upe.publisher;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Objects;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Service
+@Controller
 public class PublisherController {
     private RedisTemplate<String, Object> redisTemplate;
     private ScheduledExecutorService executorService;
-    Scanner scanner = new Scanner(System.in);
 
     @Autowired
     public PublisherController(RedisTemplate<String, Object> redisTemplate) {
@@ -24,41 +23,22 @@ public class PublisherController {
         this.executorService = Executors.newScheduledThreadPool(1);
     }
 
-    @PostConstruct
-    public void publishMessage() {
-        System.out.println("Digite o canal que você deseja entrar:");
-        String canal = scanner.nextLine();
-
-        if (Objects.equals(canal, "temperatura")) {
-            temperatura(canal);
-        } else {
-            chat(canal);
-        }
+    @GetMapping("/")
+    public String home() {
+        return "index";
     }
 
-    private void chat(String canal) {
-        System.out.printf("Digite a mensagem para enviar para o canal '%s' (ou 'sair' para sair):", canal);
-
-        while (true) {
-            String message = scanner.nextLine();
-            if ("sair".equalsIgnoreCase(message)) {
-                System.out.println("Saindo...");
-                break;
-            }
-            redisTemplate.convertAndSend(canal, message);
-            System.out.println("Mensagem publicada: " + message);
-        }
-        scanner.close();
-
+    @GetMapping("/publish")
+    public String publishPage() {
+        return "publish";
     }
 
+    @PostMapping("/publish")
+    public String publishMessage(@RequestParam String canal, @RequestParam String noticia) {
+        redisTemplate.convertAndSend(canal, noticia);
+        System.out.println("Mensagem publicada no canal '" + canal + "': " + noticia);
 
-    private void temperatura(String canal) {
-        executorService.scheduleAtFixedRate(() -> {
-            String valor = new Random().nextFloat(1, 100) + " C";
-            redisTemplate.convertAndSend(canal, valor);
-            System.out.println("Temperatura enviada: " + valor);
-        }, 0, 5 + new Random().nextInt(6), TimeUnit.SECONDS);
+        return "redirect:/publish";
     }
+
 }
-
