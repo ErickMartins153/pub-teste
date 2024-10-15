@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar Notícia</title>
+</head>
+<body>
+    <h1>Publicar Notícia</h1>
+
+    <form action="/publish" method="post">
+        <label for="canal">Canal:</label>
+        <input type="text" id="canal" name="canal" required>
+        <br><br>
+
+        <label for="mensagem">Notícia:</label>
+        <input type="text" id="noticia" name="noticia" required>
+        <br><br>
+
+        <button type="submit" onclick="noticiasEnviadas()">Enviar Notícia</button>
+    </form>
+
+    <br>
+
+    <div>
+        <h3>Notícias enviadas:</h3>
+        <ul id="noticias"></ul>
+    </div>
+    <script>
+        //logica para salvar as noticias enviadas nao ta correta, porque quando atualiza a pagina some. Tem que mudar
+        function noticiasEnviadas() {
+            let mensagens = document.getElementById("noticias");
+            let li = document.createElement("li");
+            let noticia = document.getElementById("noticia").value;
+            let canal = document.getElementById("canal").value;
+            li.innerHTML = "Canal: " + canal + " - Notícia: " + noticia;
+            mensagens.appendChild(li);
+        }
+    </script>
+</body>
+</html>
