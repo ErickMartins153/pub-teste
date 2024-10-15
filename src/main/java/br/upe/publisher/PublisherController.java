@@ -38,7 +38,12 @@ public class PublisherController {
         redisTemplate.convertAndSend(canal, noticia);
         System.out.println("Mensagem publicada no canal '" + canal + "': " + noticia);
 
-        return "redirect:/publish";
+        return "redirect:/publish" ;
+    }
+
+    @PostMapping("/changeChannel")
+    public String changeChannel(@RequestParam String canal, @RequestParam String noticia) {
+        return "redirect:/changeChannel?canal=" + canal + "&noticia=" + noticia;
     }
 
 }
